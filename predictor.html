@@ -4,8 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#0b0c12">
-  <meta name="description" content="An offline, ID-seeded dice guess generator. For fun only — fair dice rolls cannot be predicted from an ID.">
-  <title>Offline Dice · ID Guess</title>
+  <meta name="description" content="An offline dice-history analyzer based on the public website source. A game ID cannot reveal future dice rolls.">
+  <title>Offline Dice · Signal Lab</title>
   <link rel="icon" type="image/png" href="icon.png">
   <style>
     :root{color-scheme:dark;--bg:#0b0c12;--panel:#13151e;--panel2:#191c27;--line:#292d3b;--muted:#9da3b5;--text:#f7f7fb;--gold:#ffdf43;--pink:#ff4fab;--mint:#57e3b1}
@@ -22,36 +22,34 @@
       <a class="back" href="index.html">← Back to the dice game</a>
     </nav>
     <header class="hero">
-      <span class="eyebrow">Offline · No account needed</span>
-      <h1>ID Guess <span style="color:var(--gold)">Lab</span></h1>
-      <p>Get a repeatable, ID-based guess for your next color dice roll.</p>
+      <span class="eyebrow">Source-informed · Offline</span>
+      <h1>Dice Signal <span style="color:var(--gold)">Lab</span></h1>
+      <p>Check what an ID can tell you, then analyze recent rolls for a cautious estimate.</p>
     </header>
     <main>
       <section class="main-card" aria-labelledby="form-title">
-        <h2 id="form-title" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">Generate a dice guess</h2>
-        <label class="field-label" for="player-id">Player or game ID <small>Only processed in this browser</small></label>
-        <div class="input-row">
-          <input class="text-input" id="player-id" type="text" maxlength="80" autocomplete="off" placeholder="Enter your ID…" aria-describedby="id-hint">
-          <button class="primary" id="predict" type="button">Generate a guess <span aria-hidden="true">→</span></button>
-        </div>
-        <p class="hint" id="id-hint">Your ID creates a consistent sequence of guesses. It is not connected to any live game.</p>
+        <h2 id="form-title" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">Analyze recent dice outcomes</h2>
+        <label class="field-label" for="player-id">Game ID <small>Optional · checked locally only</small></label>
+        <input class="text-input" id="player-id" type="text" maxlength="80" autocomplete="off" placeholder="Paste the game ID (optional)" aria-describedby="id-hint" style="width:100%">
+        <p class="hint" id="id-hint">On this site, the game ID identifies a session. The roll request is sent to a separate secure function; the ID is not a visible dice seed.</p>
+        <label class="field-label" for="roll-history" style="margin-top:20px">Recent roll colors <small>Paste colors separated by commas or spaces</small></label>
+        <textarea class="text-input" id="roll-history" rows="4" placeholder="red, blue, green, red, purple, orange…" aria-describedby="history-hint" style="width:100%;resize:vertical"></textarea>
+        <p class="hint" id="history-hint">Use the color names shown by the dice: Red, Orange, Yellow, Green, Blue, Purple. You can paste outcomes from the visible recent-roll history.</p>
         <div class="options">
-          <div class="count-wrap">
-            <label class="field-label" for="dice-count">Dice per guess</label>
-            <select class="select-input" id="dice-count" aria-label="Number of dice"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option><option>8</option><option>10</option></select>
-          </div>
-          <p class="hint" style="margin:0 0 4px">Six equally likely colors · No network calls · Works offline</p>
+          <button class="primary" id="predict" type="button">Analyze recent rolls <span aria-hidden="true">→</span></button>
+          <p class="hint" style="margin:0 0 4px">Local analysis · No network calls · Works offline</p>
         </div>
         <section class="result" id="result" aria-live="polite" aria-atomic="false">
-          <div class="result-head"><h2>Your next guess</h2><span class="round-tag" id="round-label">GUESS 01</span></div>
+          <div class="result-head"><h2>Observed frequency estimate</h2><span class="round-tag" id="round-label">0 ROLLS</span></div>
+          <p id="estimate-summary" style="color:#d8dbe4;margin:0 0 15px"></p>
           <div class="dice-grid" id="dice-grid"></div>
-          <p class="result-note"><span aria-hidden="true">✦</span><span>These are <b>guesses</b> generated from your ID, not a forecast of a real roll.</span></p>
+          <p class="result-note"><span aria-hidden="true">✦</span><span>This is a <b>historical frequency summary</b>, not a prediction of the next roll. Previous results do not make a color more likely on a fair, independent die.</span></p>
         </section>
       </section>
-      <aside class="truth" role="note"><strong>Quick reality check</strong><p>A fair, independent dice roll cannot be predicted from a player ID. This page does not read a game’s private data, alter outcomes, or guarantee a match. Use it for fun—not to make bets or decisions.</p></aside>
+      <aside class="truth" role="note"><strong>What the website source actually shows</strong><p>The browser creates a random 10-character session ID using <code>crypto.getRandomValues</code>, then calls the Firebase function <code>rollDiceSecure</code> with that ID and the dice count. The server returns the colors and roll ID. That server-side function’s implementation is not included in the browser source, and the session ID alone does not reveal the next roll. This analyzer only summarizes outcomes you provide.</p></aside>
       <section class="below" aria-label="How this works">
-        <article class="info"><h3>🧩 What the ID does</h3><p>A local hash of your ID and guess number creates a <strong>repeatable sequence</strong>. The same ID starts the same guesses on this browser.</p></article>
-        <article class="info"><h3>🎲 What it can’t do</h3><p>IDs don’t reveal future randomness. Each color still has a <strong>1 in 6 chance</strong> on a fair six-sided die.</p></article>
+        <article class="info"><h3>📊 What the estimate means</h3><p>It identifies the most frequent colors in the history you paste and shows their observed share. That is a <strong>description of past rolls</strong>, not evidence those colors will come next.</p></article>
+        <article class="info"><h3>🎲 What the source cannot do</h3><p>There is no client-side ID-to-color formula to reproduce. If rolls are fair and independent, every color remains <strong>1 in 6</strong> on each die.</p></article>
       </section>
     </main>
     <footer class="footer">A small offline dice toy · Nothing is sent or stored remotely</footer>
@@ -63,42 +61,59 @@
     {name:'YELLOW', color:'#eab308'}, {name:'GREEN', color:'#22c55e'},
     {name:'BLUE', color:'#3b82f6'}, {name:'PURPLE', color:'#a855f7'}
   ];
-  const idInput = document.getElementById('player-id');
-  const diceCount = document.getElementById('dice-count');
+  const historyInput = document.getElementById('roll-history');
   const result = document.getElementById('result');
   const grid = document.getElementById('dice-grid');
   const roundLabel = document.getElementById('round-label');
-  let currentId = '';
-  let round = 0;
-  // A tiny deterministic PRNG for a reproducible entertainment guess. Not suitable for security.
-  function hash(text) {
-    let h = 2166136261;
-    for (let i = 0; i < text.length; i++) { h ^= text.charCodeAt(i); h = Math.imul(h, 16777619); }
-    h += h << 13; h ^= h >>> 7; h += h << 3; h ^= h >>> 17; h += h << 5;
-    return h >>> 0;
-  }
-  function makeGuess() {
-    const id = idInput.value.trim();
-    if (!id) { idInput.focus(); idInput.setCustomValidity('Enter an ID to make a guess.'); idInput.reportValidity(); return; }
-    idInput.setCustomValidity('');
-    if (id.toLowerCase() !== currentId.toLowerCase()) { currentId = id.toLowerCase(); round = 0; }
-    round++;
-    let state = hash(currentId + '|offline-dice-guess|' + round);
-    function next() { state = (Math.imul(state, 1664525) + 1013904223) >>> 0; return state / 4294967296; }
-    grid.replaceChildren();
-    for (let i = 0; i < Number(diceCount.value); i++) {
-      const face = COLORS[Math.floor(next() * COLORS.length)];
-      const card = document.createElement('div'); card.className = 'die-card'; card.style.animationDelay = (i * 45) + 'ms';
-      const tile = document.createElement('div'); tile.className = 'die-face'; tile.style.background = face.color; tile.textContent = String(i + 1);
-      const name = document.createElement('div'); name.className = 'die-name'; name.textContent = face.name;
-      card.append(tile, name); grid.append(card);
+  const summary = document.getElementById('estimate-summary');
+
+  function analyzeHistory() {
+    const tokens = historyInput.value.toUpperCase().split(/[\s,;|]+/).filter(Boolean);
+    const validNames = new Set(COLORS.map(color => color.name));
+    const values = tokens.filter(color => validNames.has(color));
+    if (!values.length) {
+      historyInput.setCustomValidity('Paste at least one valid color: red, orange, yellow, green, blue, or purple.');
+      historyInput.reportValidity();
+      return;
     }
-    roundLabel.textContent = 'GUESS ' + String(round).padStart(2, '0');
+    historyInput.setCustomValidity('');
+    const counts = new Map(COLORS.map(color => [color.name, 0]));
+    values.forEach(color => counts.set(color, counts.get(color) + 1));
+    const highest = Math.max(...counts.values());
+    const leaders = COLORS.filter(color => counts.get(color.name) === highest).map(color => color.name.toLowerCase());
+    summary.textContent = leaders.length === COLORS.length
+      ? 'The history is tied across all six colors. No historical leader.'
+      : `Most frequent in this sample: ${leaders.join(', ')}. This is only the sample leader; it does not imply a better chance next roll.`;
+    grid.replaceChildren();
+    COLORS.forEach((face, index) => {
+      const count = counts.get(face.name);
+      const percent = (count / values.length * 100).toFixed(1);
+      const card = document.createElement('div');
+      card.className = 'die-card';
+      card.style.animationDelay = (index * 45) + 'ms';
+      const tile = document.createElement('div');
+      tile.className = 'die-face';
+      tile.style.background = face.color;
+      tile.textContent = percent + '%';
+      tile.style.fontSize = '13px';
+      const name = document.createElement('div');
+      name.className = 'die-name';
+      name.textContent = face.name;
+      const amount = document.createElement('div');
+      amount.style.cssText = 'font-size:11px;color:#9da3b5;margin-top:3px';
+      amount.textContent = `${count} of ${values.length}`;
+      card.append(tile, name, amount);
+      grid.append(card);
+    });
+    roundLabel.textContent = `${values.length} ROLL${values.length === 1 ? '' : 'S'}`;
     result.classList.add('visible');
   }
-  document.getElementById('predict').addEventListener('click', makeGuess);
-  idInput.addEventListener('input', () => idInput.setCustomValidity(''));
-  idInput.addEventListener('keydown', e => { if (e.key === 'Enter') makeGuess(); });
+
+  document.getElementById('predict').addEventListener('click', analyzeHistory);
+  historyInput.addEventListener('input', () => historyInput.setCustomValidity(''));
+  historyInput.addEventListener('keydown', event => {
+    if ((event.ctrlKey || event.metaKey) && event.key === 'Enter') analyzeHistory();
+  });
 })();
 </script>
 </body>
