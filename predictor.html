@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#0b0c12">
+  <meta name="description" content="An offline, ID-seeded dice guess generator. For fun only — fair dice rolls cannot be predicted from an ID.">
+  <title>Offline Dice · ID Guess</title>
+  <link rel="icon" type="image/png" href="icon.png">
+  <style>
+    :root{color-scheme:dark;--bg:#0b0c12;--panel:#13151e;--panel2:#191c27;--line:#292d3b;--muted:#9da3b5;--text:#f7f7fb;--gold:#ffdf43;--pink:#ff4fab;--mint:#57e3b1}
+    *{box-sizing:border-box}body{margin:0;min-height:100vh;background:radial-gradient(ellipse at 50% -15%,#312142 0,transparent 48%),radial-gradient(ellipse at 100% 100%,#152c34 0,transparent 35%),var(--bg);color:var(--text);font:16px/1.5 system-ui,-apple-system,Segoe UI,sans-serif;padding:28px 18px 56px}
+    a{color:inherit}.shell{max-width:950px;margin:auto}.topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:42px}.brand{display:flex;gap:11px;align-items:center;text-decoration:none;font-weight:850;letter-spacing:.02em}.brand-mark{width:38px;height:38px;border-radius:12px;background:linear-gradient(135deg,var(--gold),#ff9d42);display:grid;place-items:center;color:#17120a;font-size:22px;box-shadow:0 8px 28px #ffb32b35}.back{color:var(--muted);font-size:14px;text-decoration:none}.back:hover{color:white}
+    .hero{text-align:center;margin:0 auto 28px;max-width:680px}.eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 11px;border:1px solid #464153;border-radius:999px;color:#f4d9ff;background:#24192c;font-size:12px;font-weight:750;letter-spacing:.11em;text-transform:uppercase}.eyebrow:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--mint);box-shadow:0 0 12px var(--mint)}h1{font-size:clamp(36px,7vw,65px);line-height:1.05;letter-spacing:-.055em;margin:17px 0 12px}.hero p{color:#b6bac8;margin:0;font-size:16px}.main-card{background:linear-gradient(160deg,#171923f2,#10121af5);border:1px solid #343747;border-radius:22px;padding:clamp(20px,4vw,36px);box-shadow:0 28px 90px #0006;position:relative;overflow:hidden}.main-card:before{content:"";position:absolute;inset:0 10% auto;height:1px;background:linear-gradient(90deg,transparent,#ffdf4388,transparent)}.field-label{display:flex;justify-content:space-between;gap:12px;align-items:center;font-size:14px;font-weight:750;margin-bottom:9px}.field-label small{color:var(--muted);font-weight:500}.input-row{display:flex;gap:10px}.text-input,.select-input{background:#0b0d14;border:1px solid #383c4b;border-radius:12px;color:white;padding:14px 15px;font:inherit;outline:none;min-width:0}.text-input{flex:1}.text-input:focus,.select-input:focus{border-color:#c8a8ff;box-shadow:0 0 0 3px #bf83ff20}.text-input::placeholder{color:#646b7d}.options{display:flex;gap:16px;align-items:end;margin:19px 0 23px}.count-wrap{width:155px}.select-input{width:100%;height:49px}.hint{color:var(--muted);font-size:12px;margin:8px 0 0}.primary{border:0;border-radius:12px;padding:0 21px;min-height:49px;background:linear-gradient(135deg,#ffe777,#ffbd4c);color:#191307;font:850 15px system-ui;cursor:pointer;box-shadow:0 9px 28px #ffca4c24;transition:transform .15s,filter .15s}.primary:hover{transform:translateY(-1px);filter:brightness(1.06)}.primary:active{transform:translateY(1px)}.result{display:none;border-top:1px solid var(--line);padding-top:24px}.result.visible{display:block}.result-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:16px}.result-head h2{font-size:20px;margin:0}.round-tag{font:700 12px ui-monospace,monospace;color:#e4d6ff;background:#2b2036;padding:6px 9px;border-radius:999px}.dice-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(88px,1fr));gap:11px}.die-card{background:linear-gradient(155deg,#222532,#171923);border:1px solid #343746;border-radius:15px;min-height:108px;padding:13px 8px 10px;text-align:center;animation:pop .3s both}.die-face{width:54px;height:54px;margin:0 auto 7px;border-radius:15px;display:grid;place-items:center;color:white;font-size:22px;font-weight:900;text-shadow:0 2px 8px #0008;box-shadow:inset 0 1px 0 #ffffff55,0 8px 22px #0005}.die-name{font-size:12px;font-weight:800;letter-spacing:.03em}.result-note{margin:17px 0 0;color:#aeb2c0;font-size:13px;display:flex;align-items:flex-start;gap:9px}.result-note b{color:var(--gold)}@keyframes pop{from{opacity:0;transform:translateY(7px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}.truth{margin-top:18px;border:1px solid #674e30;background:#211b12;border-radius:14px;padding:15px 17px;color:#e5d8c1;font-size:13px}.truth strong{color:var(--gold)}.truth p{margin:4px 0 0;color:#c1b7a5}.below{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:16px}.info{border:1px solid var(--line);border-radius:15px;background:#12141caa;padding:17px 18px}.info h3{font-size:14px;margin:0 0 6px}.info p{font-size:13px;color:var(--muted);margin:0}.info strong{color:#fff}.footer{text-align:center;color:#74798a;font-size:12px;margin-top:27px}
+    @media(max-width:600px){body{padding:18px 13px 36px}.topbar{margin-bottom:31px}.hero{margin-bottom:21px}.input-row{flex-direction:column}.primary{width:100%}.options{margin:15px 0 19px}.count-wrap{width:100%}.below{grid-template-columns:1fr}.main-card{border-radius:18px}.result-head h2{font-size:18px}}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <nav class="topbar" aria-label="Main navigation">
+      <a class="brand" href="index.html"><span class="brand-mark" aria-hidden="true">⚄</span><span>OFFLINE DICE</span></a>
+      <a class="back" href="index.html">← Back to the dice game</a>
+    </nav>
+    <header class="hero">
+      <span class="eyebrow">Offline · No account needed</span>
+      <h1>ID Guess <span style="color:var(--gold)">Lab</span></h1>
+      <p>Get a repeatable, ID-based guess for your next color dice roll.</p>
+    </header>
+    <main>
+      <section class="main-card" aria-labelledby="form-title">
+        <h2 id="form-title" style="position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);white-space:nowrap;border:0">Generate a dice guess</h2>
+        <label class="field-label" for="player-id">Player or game ID <small>Only processed in this browser</small></label>
+        <div class="input-row">
+          <input class="text-input" id="player-id" type="text" maxlength="80" autocomplete="off" placeholder="Enter your ID…" aria-describedby="id-hint">
+          <button class="primary" id="predict" type="button">Generate a guess <span aria-hidden="true">→</span></button>
+        </div>
+        <p class="hint" id="id-hint">Your ID creates a consistent sequence of guesses. It is not connected to any live game.</p>
+        <div class="options">
+          <div class="count-wrap">
+            <label class="field-label" for="dice-count">Dice per guess</label>
+            <select class="select-input" id="dice-count" aria-label="Number of dice"><option>1</option><option>2</option><option>3</option><option selected>4</option><option>5</option><option>6</option><option>8</option><option>10</option></select>
+          </div>
+          <p class="hint" style="margin:0 0 4px">Six equally likely colors · No network calls · Works offline</p>
+        </div>
+        <section class="result" id="result" aria-live="polite" aria-atomic="false">
+          <div class="result-head"><h2>Your next guess</h2><span class="round-tag" id="round-label">GUESS 01</span></div>
+          <div class="dice-grid" id="dice-grid"></div>
+          <p class="result-note"><span aria-hidden="true">✦</span><span>These are <b>guesses</b> generated from your ID, not a forecast of a real roll.</span></p>
+        </section>
+      </section>
+      <aside class="truth" role="note"><strong>Quick reality check</strong><p>A fair, independent dice roll cannot be predicted from a player ID. This page does not read a game’s private data, alter outcomes, or guarantee a match. Use it for fun—not to make bets or decisions.</p></aside>
+      <section class="below" aria-label="How this works">
+        <article class="info"><h3>🧩 What the ID does</h3><p>A local hash of your ID and guess number creates a <strong>repeatable sequence</strong>. The same ID starts the same guesses on this browser.</p></article>
+        <article class="info"><h3>🎲 What it can’t do</h3><p>IDs don’t reveal future randomness. Each color still has a <strong>1 in 6 chance</strong> on a fair six-sided die.</p></article>
+      </section>
+    </main>
+    <footer class="footer">A small offline dice toy · Nothing is sent or stored remotely</footer>
+  </div>
+<script>
+(() => {
+  const COLORS = [
+    {name:'RED', color:'#ef4444'}, {name:'ORANGE', color:'#f97316'},
+    {name:'YELLOW', color:'#eab308'}, {name:'GREEN', color:'#22c55e'},
+    {name:'BLUE', color:'#3b82f6'}, {name:'PURPLE', color:'#a855f7'}
+  ];
+  const idInput = document.getElementById('player-id');
+  const diceCount = document.getElementById('dice-count');
+  const result = document.getElementById('result');
+  const grid = document.getElementById('dice-grid');
+  const roundLabel = document.getElementById('round-label');
+  let currentId = '';
+  let round = 0;
+  // A tiny deterministic PRNG for a reproducible entertainment guess. Not suitable for security.
+  function hash(text) {
+    let h = 2166136261;
+    for (let i = 0; i < text.length; i++) { h ^= text.charCodeAt(i); h = Math.imul(h, 16777619); }
+    h += h << 13; h ^= h >>> 7; h += h << 3; h ^= h >>> 17; h += h << 5;
+    return h >>> 0;
+  }
+  function makeGuess() {
+    const id = idInput.value.trim();
+    if (!id) { idInput.focus(); idInput.setCustomValidity('Enter an ID to make a guess.'); idInput.reportValidity(); return; }
+    idInput.setCustomValidity('');
+    if (id.toLowerCase() !== currentId.toLowerCase()) { currentId = id.toLowerCase(); round = 0; }
+    round++;
+    let state = hash(currentId + '|offline-dice-guess|' + round);
+    function next() { state = (Math.imul(state, 1664525) + 1013904223) >>> 0; return state / 4294967296; }
+    grid.replaceChildren();
+    for (let i = 0; i < Number(diceCount.value); i++) {
+      const face = COLORS[Math.floor(next() * COLORS.length)];
+      const card = document.createElement('div'); card.className = 'die-card'; card.style.animationDelay = (i * 45) + 'ms';
+      const tile = document.createElement('div'); tile.className = 'die-face'; tile.style.background = face.color; tile.textContent = String(i + 1);
+      const name = document.createElement('div'); name.className = 'die-name'; name.textContent = face.name;
+      card.append(tile, name); grid.append(card);
+    }
+    roundLabel.textContent = 'GUESS ' + String(round).padStart(2, '0');
+    result.classList.add('visible');
+  }
+  document.getElementById('predict').addEventListener('click', makeGuess);
+  idInput.addEventListener('input', () => idInput.setCustomValidity(''));
+  idInput.addEventListener('keydown', e => { if (e.key === 'Enter') makeGuess(); });
+})();
+</script>
+</body>
+</html>
